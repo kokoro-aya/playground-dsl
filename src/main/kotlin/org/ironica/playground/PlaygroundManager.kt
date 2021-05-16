@@ -1,10 +1,7 @@
 package org.ironica.playground
 
-import com.bennyhuo.kotlin.deepcopy.compiler.deepCopy
-import java.util.*
-import java.util.function.Function
-
 class PlaygroundManager(val playground: Playground) {
+    // Decorator pattern
 
     private var consoleLog = ""
     private var special = ""
@@ -19,34 +16,36 @@ class PlaygroundManager(val playground: Playground) {
     val isBlocked = playground.player.isBlocked
     val isBlockedLeft = playground.player.isBlockedLeft
     val isBlockedRight = playground.player.isBlockedRight
-    val collectedGem = playground.player.collectedGem
+    fun collectedGem(): Int {
+        return playground.player.collectedGem
+    }
 
     fun turnLeft() {
         playground.player.turnLeft()
-        printGrid()
+//        printGrid()
         appendEntry()
     }
     fun moveForward() {
         playground.player.moveForward()
-        printGrid()
+//        printGrid()
         appendEntry()
     }
     fun collectGem() {
         playground.player.collectGem()
-        printGrid()
+//        printGrid()
         this.special = "GEM"
         appendEntry()
     }
     fun toggleSwitch() {
         playground.player.toggleSwitch()
-        printGrid()
+//        printGrid()
         this.special = "SWITCH"
         appendEntry()
     }
 
     fun print(lmsg: List<String>) {
-        lmsg.forEach { print("$it ") }
-        println()
+//        lmsg.forEach { print("$it ") }
+//        println()
         lmsg.forEach { consoleLog += "$it " }
         consoleLog += "\n"
         appendEntry()

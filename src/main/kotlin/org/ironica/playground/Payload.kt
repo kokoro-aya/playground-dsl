@@ -13,6 +13,7 @@ data class Payload(val player: SerializedPlayer, val grid: SerializedGrid, val c
 
 
 val payloadStorage = mutableListOf<Payload>()
+var gameStatus: Status? = null
 
 enum class Status { OK, ERROR }
 

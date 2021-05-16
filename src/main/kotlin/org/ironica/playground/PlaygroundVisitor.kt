@@ -29,6 +29,8 @@ data class BooleanLiteral(val variability: Variability, val content: Boolean): T
 data class CharacterLiteral(val variability: Variability, val content: Char): TypedLiteral()
 data class StringLiteral(val variability: Variability, val content: String): TypedLiteral()
 
+// TODO: object NullLiteral: TypedLiteral()
+
 data class ReturnedLiteral(val content: Any): Throwable()
 
 typealias TypedParam = Pair<String, Type>
@@ -782,7 +784,7 @@ class PlaygroundVisitor(private val manager: PlaygroundManager): playgroundGramm
             "isBlocked" -> manager.isBlocked()
             "isBlockedLeft" -> manager.isBlockedLeft()
             "isBlockedRight" -> manager.isBlockedRight()
-            "collectedGem" -> manager.collectedGem
+            "collectedGem" -> manager.collectedGem()
             else -> {
                 when {
                     internalVariables.containsKey(name) -> {

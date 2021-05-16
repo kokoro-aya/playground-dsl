@@ -17,14 +17,17 @@ fun Route.getPlaygroundRoute() {
     route("/paidiki-xara") {
         post {
             val data = call.receive<Data>()
-            payloadStorage.clear()
             val playgroundInterface = PlaygroundInterface(data.code, convertJsonToGrid(data.grid))
             try {
                 playgroundInterface.start()
                 val moves = payloadStorage
-                call.respond(NormalMessage(Status.OK, payloadStorage))
+//                println("The size of payloads is ${moves.size}")
+                if (gameStatus == Status.OK) call.respond(NormalMessage(Status.OK, moves))
+                else call.respond(ErrorMessage(Status.ERROR, "Something went wrong while processing your request."))
+                payloadStorage.clear()
             } catch (e: Exception) {
                 call.respond(ErrorMessage(Status.ERROR, e.message ?: ""))
+                payloadStorage.clear()
             }
         }
     }
