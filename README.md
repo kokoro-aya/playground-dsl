@@ -10,3 +10,5 @@ Libraries used:
 - ktor-serialization
 - kotlin-scripting-jvm-host
 - kotlinpoet
+
+Special thanks to my friends who has suggested me to dive into this way, who has adviced me with some ideas and who has helped me to debug for the whole night on scripting and interface constructors.
