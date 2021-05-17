@@ -1,13 +1,11 @@
 package org.ironica.playground
 
 import org.antlr.v4.runtime.tree.*
-import playgroundGrammarParser
 
 import org.ironica.playground.SpecialRetVal.*
 import org.ironica.playground.Type.*
 import org.ironica.playground.Variability.*
 import playgroundGrammarVisitor
-import kotlin.math.exp
 import kotlin.math.pow
 
 enum class SpecialRetVal {

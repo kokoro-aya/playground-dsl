@@ -1,0 +1,11 @@
+/src/main/java/playgroundGrammar.interp
+/src/main/java/playgroundGrammar.tokens
+/src/main/java/playgroundGrammarBaseListener.java
+/src/main/java/playgroundGrammarBaseVisitor.java
+/src/main/java/playgroundGrammarLexer.java
+/src/main/java/playgroundGrammarLexer.interp
+/src/main/java/playgroundGrammarLexer.tokens
+/src/main/java/playgroundGrammarListener.java
+/src/main/java/playgroundGrammarParser.java
+/src/main/java/playgroundGrammarVisitor.java
+/src/main/kotlin/org/ironica/playground/righthand.swift

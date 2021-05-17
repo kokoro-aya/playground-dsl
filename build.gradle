@@ -28,7 +28,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-    compile group: 'org.antlr', name: 'antlr4', version: '4.8'
+    compile group: 'org.antlr', name: 'antlr4', version: '4.9'
 
     implementation 'io.ktor:ktor-server-core:1.5.4'
     implementation 'io.ktor:ktor-server-netty:1.5.4'
@@ -44,7 +44,6 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
 
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-scripting-jsr223', version: '1.5.0'
-    runtimeOnly group: 'org.jetbrains.kotlin', name: 'kotlin-main-kts', version: '1.5.0'
 
     implementation group: 'com.squareup', name: 'kotlinpoet', version: '1.8.0'
 
