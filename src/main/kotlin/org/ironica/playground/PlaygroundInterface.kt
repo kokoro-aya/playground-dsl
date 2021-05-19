@@ -38,6 +38,8 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
         Direction.RIGHT
     )
 
+    val payloadStorage: MutableList<Payload> = mutableListOf()
+
     //    private val player = Player(
 //        Coordinate(0, 0),
 //        Direction.RIGHT
@@ -76,6 +78,9 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
 }
 
 class OldInterface(code: String, grid: Grid) {
+
+    val payloadStorage: MutableList<Payload> = mutableListOf()
+
     private val input: CharStream = CharStreams.fromString(code)
     private val lexer = playgroundGrammarLexer(input)
     private val tokens = CommonTokenStream(lexer)
@@ -95,7 +100,7 @@ class OldInterface(code: String, grid: Grid) {
 //            Direction.DOWN
 //        )
     val playground = Playground(grid, player, calculateInitialGem(grid))
-    private val manager = PlaygroundManager(playground)
+    private val manager = PlaygroundManager(playground, payloadStorage)
     private val exec = PlaygroundVisitor(manager)
     fun start() {
         exec.visit(tree)

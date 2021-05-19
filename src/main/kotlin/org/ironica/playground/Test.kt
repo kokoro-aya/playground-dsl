@@ -14,7 +14,7 @@ fun main() {
         Direction.RIGHT
     )
 
-    val manager = PlaygroundManager(Playground(grid, player, 4))
+    val manager = PlaygroundManager(Playground(grid, player, 4), mutableListOf())
 
     val win = play(manager) {
         fun turnRight() {

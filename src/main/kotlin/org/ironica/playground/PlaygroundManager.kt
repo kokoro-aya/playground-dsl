@@ -1,6 +1,6 @@
 package org.ironica.playground
 
-class PlaygroundManager(val playground: Playground) {
+class PlaygroundManager(val playground: Playground, val payloadStorage: MutableList<Payload>) {
     // Decorator pattern
 
     private var consoleLog = ""

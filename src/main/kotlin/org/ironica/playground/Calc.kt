@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
         Direction.RIGHT
     )
     val playground = Playground(grid, player, 2)
-    val manager = PlaygroundManager(playground)
+    val manager = PlaygroundManager(playground, mutableListOf())
     val exec = PlaygroundVisitor(manager)
     exec.visit(tree)
     playground.printGrid()

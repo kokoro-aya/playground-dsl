@@ -20,14 +20,12 @@ fun Route.getPlaygroundRoute() {
             val playgroundInterface = PlaygroundInterface(data.code, convertJsonToGrid(data.grid))
             try {
                 playgroundInterface.start()
-                val moves = payloadStorage
+                val moves = playgroundInterface.payloadStorage
 //                println("The size of payloads is ${moves.size}")
                 if (gameStatus == Status.OK) call.respond(NormalMessage(Status.OK, moves))
                 else call.respond(ErrorMessage(Status.ERROR, "Something went wrong while processing your request."))
-                payloadStorage.clear()
             } catch (e: Exception) {
                 call.respond(ErrorMessage(Status.ERROR, e.message ?: ""))
-                payloadStorage.clear()
             }
         }
     }

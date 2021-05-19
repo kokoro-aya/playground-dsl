@@ -33,6 +33,11 @@ import kotlin.script.experimental.host.toScriptSource
 class SimulaPoet {
     private val fs = FileSpec.builder("Simula", "Poet")
 
+    fun feed(): SimulaPoet {
+        fs.addImport("org.ironica.playground.PlaygroundInterface", "payloadStorage")
+        return this
+    }
+
     fun feed(grid: Grid): SimulaPoet {
         fs.addProperty(PropertySpec.builder("grid", Grid::class.java)
             .initializer(grid.generateTemplate())
@@ -50,7 +55,7 @@ class SimulaPoet {
 
     fun feed(initialGem: Int): SimulaPoet {
         fs.addProperty(PropertySpec.builder("manager", PlaygroundManager::class)
-            .initializer("PlaygroundManager(Playground(grid, player, $initialGem))")
+            .initializer("PlaygroundManager(Playground(grid, player, $initialGem), org.ironica.playground.PlaygroundInterface.payloadStorage as MutableList<Payload>)")
             .build()
         )
         return this
@@ -82,8 +87,7 @@ class SimulaPoet {
 }
 
 fun String.wrapCode(): String {
-    return "payloadStorage as MutableList<Payload> \n" +
-    "val _win = play(manager) {\n" + this.split("\n").joinToString("\n") { "    $it" } + "\n}.end()\n" + "println(_win)\n"
+    return "val _win = play(manager) {\n" + this.split("\n").joinToString("\n") { "    $it" } + "\n}.end()\n" + "println(_win)\n"
 }
 
 fun main() {
@@ -124,7 +128,9 @@ fun main() {
     val codeGen = StringBuilder()
 
     val sim = SimulaPoet()
-    sim.feed(grid)
+    sim
+        .feed()
+        .feed(grid)
         .feed(player)
         .feed(2)
         .generate(codeGen)
@@ -134,7 +140,7 @@ fun main() {
 
     val gen = codeGen.toString()
 
-//    println(gen)
+    println(gen)
 
     SimulaRunner.evalScript(gen.toScriptSource(), listOf()).reports.forEach {
         println(" : ${it.message}" + if (it.exception == null) "" else ": ${it.exception}")
