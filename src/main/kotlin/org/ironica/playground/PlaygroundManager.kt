@@ -1,6 +1,6 @@
 package org.ironica.playground
 
-class PlaygroundManager(val playground: Playground, val payloadStorage: MutableList<Payload>) {
+class PlaygroundManager(val playground: Playground) {
     // Decorator pattern
 
     private var consoleLog = ""
@@ -44,8 +44,8 @@ class PlaygroundManager(val playground: Playground, val payloadStorage: MutableL
     }
 
     fun print(lmsg: List<String>) {
-//        lmsg.forEach { print("$it ") }
-//        println()
+        lmsg.forEach { print("$it ") }
+        println()
         lmsg.forEach { consoleLog += "$it " }
         consoleLog += "\n"
         appendEntry()
@@ -65,7 +65,7 @@ class PlaygroundManager(val playground: Playground, val payloadStorage: MutableL
     }
 
     private fun appendEntry() {
-        if (payloadStorage.size > 1000)
+        if (payloadStorage.get().size > 1000)
             throw Exception("Too many entries!")
         val currentGrid = Array(playground.grid.size) { Array(playground.grid[0].size) { Block.OPEN } }
         for (i in playground.grid.indices)
@@ -77,7 +77,7 @@ class PlaygroundManager(val playground: Playground, val payloadStorage: MutableL
             this.consoleLog,
             this.special
         )
-        payloadStorage.add(payload)
+        payloadStorage.get().add(payload)
         this.special = ""
     }
 

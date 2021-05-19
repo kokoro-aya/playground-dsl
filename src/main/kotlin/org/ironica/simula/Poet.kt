@@ -33,11 +33,6 @@ import kotlin.script.experimental.host.toScriptSource
 class SimulaPoet {
     private val fs = FileSpec.builder("Simula", "Poet")
 
-    fun feed(): SimulaPoet {
-        fs.addImport("org.ironica.playground.PlaygroundInterface", "payloadStorage")
-        return this
-    }
-
     fun feed(grid: Grid): SimulaPoet {
         fs.addProperty(PropertySpec.builder("grid", Grid::class.java)
             .initializer(grid.generateTemplate())
@@ -55,7 +50,7 @@ class SimulaPoet {
 
     fun feed(initialGem: Int): SimulaPoet {
         fs.addProperty(PropertySpec.builder("manager", PlaygroundManager::class)
-            .initializer("PlaygroundManager(Playground(grid, player, $initialGem), org.ironica.playground.PlaygroundInterface.payloadStorage as MutableList<Payload>)")
+            .initializer("PlaygroundManager(Playground(grid, player, $initialGem))")
             .build()
         )
         return this
@@ -87,7 +82,7 @@ class SimulaPoet {
 }
 
 fun String.wrapCode(): String {
-    return "val _win = play(manager) {\n" + this.split("\n").joinToString("\n") { "    $it" } + "\n}.end()\n" + "println(_win)\n"
+    return "runBlocking {\n" + "    val _win = play(manager) {\n" + this.split("\n").joinToString("\n") { "        $it" } + "\n}.end()\n" + "    println(_win)\n" + "}\n"
 }
 
 fun main() {
@@ -113,9 +108,17 @@ fun main() {
         for (x in 1..4) {
             moveForward()
             toggleSwitch()
+            launch {
+                delay(500)
+                println("Foo")
+            }
             turnRight()
             moveForward()
             collectGem()
+            launch {
+                delay(750)
+                println("Bar")
+            }
             turnBack()
             moveForward()
             turnRight()
@@ -123,13 +126,10 @@ fun main() {
         }
     """.wrapCode().trimIndent()
 
-    val st = System.currentTimeMillis()
-
     val codeGen = StringBuilder()
 
     val sim = SimulaPoet()
     sim
-        .feed()
         .feed(grid)
         .feed(player)
         .feed(2)
@@ -142,12 +142,8 @@ fun main() {
 
     println(gen)
 
-    SimulaRunner.evalScript(gen.toScriptSource(), listOf()).reports.forEach {
-        println(" : ${it.message}" + if (it.exception == null) "" else ": ${it.exception}")
-    }
+    println(SimulaRunner.evalSnippet(gen).first)
 
-    val ed = System.currentTimeMillis()
 
-    println("It takes about ${(ed - st) / 1000}s ${(ed - st) % 1000}ms to finish the task.")
 }
 

@@ -38,8 +38,6 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
         Direction.RIGHT
     )
 
-    val payloadStorage: MutableList<Payload> = mutableListOf()
-
     //    private val player = Player(
 //        Coordinate(0, 0),
 //        Direction.RIGHT
@@ -48,7 +46,7 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
 //            Coordinate(5, 2),
 //            Direction.DOWN
 //        )
-    fun start() {
+    fun start(): Status {
         val codeGen = StringBuilder()
         val sim = SimulaPoet()
         sim.feed(grid)
@@ -62,24 +60,14 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
 
 //        println(gen)
 
-        SimulaRunner.evalScript(gen.toScriptSource(), listOf(ProvidedProperty("payloadStorage", MutableList::class, payloadStorage)))
-            .let { diag ->
-                diag.onSuccess {
-                    gameStatus = Status.OK
-                    println("Program executed successfully!")
-                    diag
-                }
-                diag.onFailure {
-                    gameStatus = Status.ERROR
-                    println("Program failed!")
-                }
-            }
+        SimulaRunner.evalSnippet(gen).let {
+            println(it.first)
+            return it.second
+        }
     }
 }
 
 class OldInterface(code: String, grid: Grid) {
-
-    val payloadStorage: MutableList<Payload> = mutableListOf()
 
     private val input: CharStream = CharStreams.fromString(code)
     private val lexer = playgroundGrammarLexer(input)
@@ -100,7 +88,7 @@ class OldInterface(code: String, grid: Grid) {
 //            Direction.DOWN
 //        )
     val playground = Playground(grid, player, calculateInitialGem(grid))
-    private val manager = PlaygroundManager(playground, payloadStorage)
+    private val manager = PlaygroundManager(playground)
     private val exec = PlaygroundVisitor(manager)
     fun start() {
         exec.visit(tree)

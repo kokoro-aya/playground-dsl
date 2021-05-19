@@ -19,11 +19,14 @@ fun Route.getPlaygroundRoute() {
             val data = call.receive<Data>()
             val playgroundInterface = PlaygroundInterface(data.code, convertJsonToGrid(data.grid))
             try {
-                playgroundInterface.start()
-                val moves = playgroundInterface.payloadStorage
+                val status = playgroundInterface.start()
+                val moves = payloadStorage.get()
 //                println("The size of payloads is ${moves.size}")
-                if (gameStatus == Status.OK) call.respond(NormalMessage(Status.OK, moves))
-                else call.respond(ErrorMessage(Status.ERROR, "Something went wrong while processing your request."))
+                when (status) {
+                    Status.OK -> call.respond(NormalMessage(Status.OK, moves))
+                    Status.ERROR -> call.respond(ErrorMessage(Status.ERROR, "Something went wrong while processing your request."))
+                    Status.INCOMPLETE -> call.respond(ErrorMessage(Status.INCOMPLETE, "It seems like you have not entered the full program."))
+                }
             } catch (e: Exception) {
                 call.respond(ErrorMessage(Status.ERROR, e.message ?: ""))
             }

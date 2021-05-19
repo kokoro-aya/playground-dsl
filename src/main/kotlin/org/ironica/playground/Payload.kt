@@ -2,6 +2,8 @@ package org.ironica.playground
 
 import kotlinx.serialization.Serializable
 
+var payloadStorage: ThreadLocal<MutableList<Payload>> = ThreadLocal.withInitial(::mutableListOf)
+
 @Serializable
 data class SerializedPlayer(val x: Int, val y: Int, val dir: Direction)
 
@@ -13,7 +15,7 @@ data class Payload(val player: SerializedPlayer, val grid: SerializedGrid, val c
 
 var gameStatus: Status? = null
 
-enum class Status { OK, ERROR }
+enum class Status { OK, ERROR, INCOMPLETE }
 
 @Serializable
 sealed class Message
