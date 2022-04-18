@@ -20,7 +20,7 @@ data class Coordinate(var x: Int, var y: Int) {
     fun decrementY() { y -= 1 }
 }
 
-class Player(val coo: Coordinate, var dir: Direction) {
+data class Player(val coo: Coordinate, var dir: Direction) {
 
     lateinit var grid: Grid
 

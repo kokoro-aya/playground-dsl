@@ -22,7 +22,7 @@ data class ProvidedProperty(val name: String, val type: KClass<*>, val value: An
 /**
  * Implementation of Eval Runner with help of @author dylech30th
  */
-object SimulaRunner : Logging {
+class SimulaRunner : Logging {
 
     private val defaultImportKotlinPackages = listOf(
         "kotlin.collections.*",

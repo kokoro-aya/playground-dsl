@@ -104,6 +104,8 @@ fun main() {
         fun turnBack() {
             for (i in 1..2) turnLeft()
         }
+        
+        println("Player comparison: " + (Player(Coordinate(0, 0), Direction.RIGHT) == Player(Coordinate(0, 0), Direction.RIGHT)))
 
         for (x in 1..4) {
             moveForward()
@@ -142,8 +144,9 @@ fun main() {
 
     println(gen)
 
-    println(SimulaRunner.evalSnippet(gen).first)
+    println(SimulaRunner().evalSnippet(gen).first)
 
+    println(SimulaRunner().evalSnippet(gen).first)
 
 }
 
