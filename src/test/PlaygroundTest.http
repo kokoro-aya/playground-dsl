@@ -2,7 +2,31 @@ POST http://127.0.0.1:4293/paidiki-xara
 Content-Type: application/json
 
 {
-  "value": "let a = 4\nprint(a)"
+    "code": "val a = 4\nconsole.log(a)",
+    "grid": [[
+    { "type": "OPEN" },
+    { "type": "CLOSEDSWITCH" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" }
+    ], [
+    {"type":  "CLOSEDSWITCH" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "BLOCKED" }
+    ], [
+    {"type":  "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" }
+    ]],
+    "players": [{
+    "name": "player1",
+    "p": { "x": 0, "y": 0, "dir": "RIGHT" }
+    }],
+    "energy": 9999
 }
 
 ###
@@ -11,7 +35,65 @@ POST http://127.0.0.1:4293/paidiki-xara
 Content-Type: application/json
 
 {
-  "value": "for i in 1 ... 4 {\n  print(i)\n}"
+    "code": "for (i in 1 .. 4) {\n  console.log(i)\n}",
+    "grid": [[
+    { "type": "OPEN" },
+    { "type": "CLOSEDSWITCH" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" }
+    ], [
+    {"type":  "CLOSEDSWITCH" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "BLOCKED" }
+    ], [
+    {"type":  "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" }
+    ]],
+    "players": [{
+    "name": "player1",
+    "p": { "x": 0, "y": 0, "dir": "RIGHT" }
+    }],
+    "energy": 9999
+}
+
+
+###
+
+POST http://127.0.0.1:4293/paidiki-xara
+Content-Type: application/json
+
+{
+  "code": "moveForward()",
+  "grid": [[
+    { "type": "OPEN" },
+    { "type": "CLOSEDSWITCH" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" }
+  ], [
+    {"type":  "CLOSEDSWITCH" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "BLOCKED" }
+  ], [
+    {"type":  "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" }
+  ]],
+  "players": [{
+    "name": "player1",
+    "p": { "x": 0, "y": 0, "dir": "RIGHT" }
+  }],
+  "energy": 9999
 }
 
 ###

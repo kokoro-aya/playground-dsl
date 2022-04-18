@@ -13,20 +13,25 @@ data class NamedPlayer(val name: String, val p: SerializedPlayer)
 
 fun computeInitialGem(grid: Grid): Int = grid.flatten().filter { it == Gem }.size
 
-fun launchPlayground(code: String, grid: Grid, players: Array<NamedPlayer>, energy: Int): Status {
-    val codeGen = StringBuilder()
-    val sim = SimulaPoet()
-    sim.feed(grid)
-        .feed(players)
-        .feed(computeInitialGem(grid), energy)
-        .generate(codeGen)
-    codeGen.append("\n")
-    codeGen.append(code.wrapCode().trimIndent())
+// This class cannot simplify to a function
+class PlaygroundInterface(
+    val code: String, val grid: Grid, val players: Array<NamedPlayer>, val energy: Int) {
 
-    val gen = codeGen.toString()
+    fun start(): Status {
+        val codeGen = StringBuilder()
+        val sim = SimulaPoet()
+        sim.feed(grid)
+            .feed(players)
+            .feed(computeInitialGem(grid), energy)
+            .generate(codeGen)
+        codeGen.append("\n")
+        codeGen.append(code.wrapCode().trimIndent())
 
-    SimulaRunner().evalSnippet(gen).let {
-        println(it.first)
-        return it.second
+        val gen = codeGen.toString()
+
+        SimulaRunner().evalSnippet(gen).let {
+            println(it.first)
+            return it.second
+        }
     }
 }

@@ -51,7 +51,7 @@ class SimulaPoet {
         fs.addProperty(PropertySpec.builder("players",
             List::class.asTypeName()
                 .parameterizedBy(Player::class.asTypeName()))
-            .initializer("arrayOf(${players.map { it.name }.joinToString(", ")})")
+            .initializer("listOf(${players.map { it.name }.joinToString(", ")})")
             .build()
         )
         return this

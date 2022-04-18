@@ -1,6 +1,14 @@
 package org.ironica.playground
 
+class Console(val manager: PlaygroundManager) {
+    fun <T> log(vararg strings: T) {
+        return manager.print(strings.map { it.toString() })
+    }
+}
+
 class PlaygroundBuilder(private val manager: PlaygroundManager) {
+
+    val console = Console(manager)
 
     val isOnGem: Boolean
         get() = manager.isOnGem.invoke()
@@ -26,9 +34,7 @@ class PlaygroundBuilder(private val manager: PlaygroundManager) {
     fun moveForward() = manager.moveForward()
     fun collectGem() = manager.collectGem()
     fun toggleSwitch() = manager.toggleSwitch()
-    fun print(vararg lmsg: String) {
-        return manager.print(lmsg.toList())
-    }
+    fun <T> print(vararg strings: T) = console.log(*strings)
 
     fun end(): Boolean {
         return manager.win()

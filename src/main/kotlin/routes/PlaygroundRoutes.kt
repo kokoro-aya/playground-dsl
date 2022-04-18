@@ -10,19 +10,27 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.ironica.playground.*
 import java.lang.Exception
 
+@OptIn(ExperimentalSerializationApi::class)
 fun Route.getPlaygroundRoute() {
     route("/paidiki-xara") {
         post {
-            val data = call.receive<Data>()
+            val data = Json.decodeFromString<Data>(call.receive())
+            // see https://github.com/Kotlin/kotlinx.serialization/issues/1419 @StefanoBerlato
+            val playgroundInterface = PlaygroundInterface(
+                data.code,
+                data.grid.map { it.map { it }.toTypedArray() }.toTypedArray(),
+                data.players.toTypedArray(),
+                data.energy
+            )
             try {
-                val status = launchPlayground(
-                    data.code,
-                    data.grid.map { it.map { it }.toTypedArray() }.toTypedArray(),
-                    data.players.toTypedArray(),
-                    data.energy)
+                // Need to persist playground in `PlaygroundInterface` so that payloadStorage won't be refreshed
+                val status = playgroundInterface.start()
                 val moves = payloadStorage.get()
 //                println("The size of payloads is ${moves.size}")
                 when (status) {
