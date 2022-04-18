@@ -17,7 +17,7 @@ fun computeInitialGem(grid: Grid): Int = grid.flatten().filter { it == Gem }.siz
 class PlaygroundInterface(
     val code: String, val grid: Grid, val players: Array<NamedPlayer>, val energy: Int) {
 
-    fun start(): Status {
+    fun start(): Pair<Any?, CodeStatus> {
         val codeGen = StringBuilder()
         val sim = SimulaPoet()
         sim.feed(grid)
@@ -29,9 +29,20 @@ class PlaygroundInterface(
 
         val gen = codeGen.toString()
 
+        println("Processing request, please wait...")
+
         SimulaRunner().evalSnippet(gen).let {
-            println(it.first)
-            return it.second
+//            println(it.first)
+
+            println()
+
+            println(when (it.second) {
+                CodeStatus.OK -> "[1]Code executed successfully"
+                CodeStatus.ERROR -> "[2]Some error occurred while executing your code"
+                CodeStatus.INCOMPLETE -> "[3]The code is not complete"
+            })
+
+            return it
         }
     }
 }

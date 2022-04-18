@@ -36,8 +36,8 @@ class PlaygroundBuilder(private val manager: PlaygroundManager) {
     fun toggleSwitch() = manager.toggleSwitch()
     fun <T> print(vararg strings: T) = console.log(*strings)
 
-    fun end(): Boolean {
-        return manager.win()
+    fun run(): List<Payload> {
+        return returnedPayloads()
     }
 }
 

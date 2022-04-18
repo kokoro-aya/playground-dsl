@@ -1,18 +1,14 @@
 package org.ironica.simula
 
 import org.apache.logging.log4j.kotlin.Logging
-import org.ironica.playground.Status
+import org.ironica.playground.CodeStatus
 import org.jetbrains.kotlinx.ki.shell.KotlinShell
 import org.jetbrains.kotlinx.ki.shell.OnEval
 import org.jetbrains.kotlinx.ki.shell.Shell
-import org.jetbrains.kotlinx.ki.shell.bound
 import org.jetbrains.kotlinx.ki.shell.wrappers.ResultWrapper
-import javax.script.ScriptEngineManager
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.util.LinkedSnippet
 
 data class ProvidedProperty(val name: String, val type: KClass<*>, val value: Any?) {
@@ -90,31 +86,32 @@ class SimulaRunner : Logging {
         shell.initEngine()
     }
 
-    fun evalSnippet(source: String): Pair<String?, Status> {
+    fun evalSnippet(source: String): Pair<Any?, CodeStatus> {
         val time = System.nanoTime()
         val result = shell.eval(source)
         shell.evaluationTimeMillis = (System.nanoTime() - time) / 1_000_000
         return when (result.getStatus()) {
             ResultWrapper.Status.SUCCESS -> {
                 shell.incompleteLines.clear()
-                handleSuccess(result.result as ResultWithDiagnostics.Success<*>) to Status.OK
+                handleSuccess(result.result as ResultWithDiagnostics.Success<*>) to CodeStatus.OK
             }
             ResultWrapper.Status.ERROR -> {
                 shell.incompleteLines.clear()
-                handleError(result.result, result.isCompiled) to Status.ERROR
+                handleError(result.result, result.isCompiled) to CodeStatus.ERROR
             }
             ResultWrapper.Status.INCOMPLETE -> {
                 shell.incompleteLines.add(source)
-                null to Status.INCOMPLETE
+                null to CodeStatus.INCOMPLETE
             }
         }
     }
 
-    private fun handleSuccess(result: ResultWithDiagnostics.Success<*>): String? {
+    // Modified version of handleSuccess to change its return type
+    private fun handleSuccess(result: ResultWithDiagnostics.Success<*>): Any? {
         val snippets = result.value as LinkedSnippet<KJvmEvaluatedSnippet>
         shell.eventManager.emitEvent(OnEval(snippets))
         return when (val evalResultValue = snippets.get().result) {
-            is ResultValue.Value -> "${evalResultValue.name}${shell.renderResultType(evalResultValue)} = ${evalResultValue.value}".bound(shell.settings.maxResultLength)
+            is ResultValue.Value -> evalResultValue.value
             is ResultValue.Error -> renderError(evalResultValue)
             is ResultValue.Unit -> "Kotlin.Unit"
             ResultValue.NotEvaluated -> null

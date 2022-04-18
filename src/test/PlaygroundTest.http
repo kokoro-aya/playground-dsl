@@ -102,7 +102,31 @@ POST http://127.0.0.1:4293/paidiki-xara
 Content-Type: application/json
 
 {
-  "value": "let totalGem = 4\nvar collected = 0\n\nfunc turnRight() {\n    turnLeft()\n    turnLeft()\n    turnLeft()\n}\n\nwhile collected < totalGem {\n    if isOnGem {\n        collectGem()\n        collected += 1\n    }\n    if isOnClosedSwitch {\n        toggleSwitch()\n    }\n    if !isBlockedRight {\n        turnRight()\n        moveForward()\n    } else {\n        if isBlocked {\n            while isBlocked {\n                turnLeft()\n            }\n        }\n        moveForward()\n    }\n}"
+  "code": "val totalGem = 2\nvar collected = 0\n\nfun turnRight() {\n    turnLeft()\n    turnLeft()\n    turnLeft()\n}\n\nwhile (collected < totalGem) {\n    if (isOnGem) {\n        collectGem()\n        collected += 1\n    }\n    if (isOnClosedSwitch) {\n        toggleSwitch()\n    }\n    if (!isBlockedRight) {\n        turnRight()\n        moveForward()\n    } else {\n        if (isBlocked) {\n            while (isBlocked) {\n                turnLeft()\n            }\n        }\n        moveForward()\n    }\n}",
+  "grid": [[
+    { "type": "OPEN" },
+    { "type": "CLOSEDSWITCH" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" },
+    { "type": "BLOCKED" }
+  ], [
+    {"type":  "CLOSEDSWITCH" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "OPEN" },
+    { "type": "BLOCKED" }
+  ], [
+    {"type":  "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" },
+    { "type": "GEM" },
+    { "type": "BLOCKED" }
+  ]],
+  "players": [{
+    "name": "player1",
+    "p": { "x": 0, "y": 0, "dir": "RIGHT" }
+  }],
+  "energy": 9999
 }
 
 ###

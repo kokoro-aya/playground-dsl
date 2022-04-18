@@ -96,7 +96,16 @@ class SimulaPoet {
 }
 
 fun String.wrapCode(): String {
-    return "runBlocking {\n" + "    val _win = play(manager) {\n" + this.split("\n").joinToString("\n") { "        $it" } + "\n}.end()\n" + "    println(_win)\n" + "}\n"
+    return buildString {
+        appendLine("payloadStorage.set(mutableListOf())")
+        appendLine("statusStorage.set(GameStatus.PENDING)")
+        appendLine("runBlocking {")
+        appendLine("    play(manager) {")
+        appendLine(this@wrapCode.split("\n").joinToString("\n") { "\t\t$it" })
+        appendLine("    }.run()")
+        appendLine("}")
+        appendLine("payloadStorage.get() to statusStorage.get()")
+    }
 }
 
 fun main() {

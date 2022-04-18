@@ -60,7 +60,7 @@ fun main() {
                 turnRight()
                 moveForward()
             }
-        }.end()
+        }.run()
         println(win)
     }
 }

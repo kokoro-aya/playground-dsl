@@ -1,20 +1,15 @@
 package routes
 
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.Route
-import io.ktor.routing.post
-import io.ktor.routing.route
-import io.ktor.routing.routing
+import io.ktor.application.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.ironica.playground.*
-import java.lang.Exception
 
 @OptIn(ExperimentalSerializationApi::class)
 fun Route.getPlaygroundRoute() {
@@ -30,16 +25,46 @@ fun Route.getPlaygroundRoute() {
             )
             try {
                 // Need to persist playground in `PlaygroundInterface` so that payloadStorage won't be refreshed
-                val status = playgroundInterface.start()
+                val resp =
+                    withContext(Dispatchers.Default) { playgroundInterface.start() }
                 val moves = payloadStorage.get()
 //                println("The size of payloads is ${moves.size}")
-                when (status) {
-                    Status.OK -> call.respond(NormalMessage(Status.OK, moves))
-                    Status.ERROR -> call.respond(ErrorMessage(Status.ERROR, "Something went wrong while processing your request."))
-                    Status.INCOMPLETE -> call.respond(ErrorMessage(Status.INCOMPLETE, "It seems like you have not entered the full program."))
+                when (resp.second) {
+                    CodeStatus.OK -> {
+                        when (val rsf = resp.first) {
+                            is Pair<*, *> -> {
+                                call.respond(
+                                    NormalMessage(
+                                        resp.second,
+                                        (rsf as Pair<List<Payload>, GameStatus>).first,
+                                        (rsf as Pair<List<Payload>, GameStatus>).second
+                                    )
+                                )
+                            }
+                            is String -> {
+                                println("Route:: encountered some error \n$rsf\n")
+                                call.respond(
+                                    ErrorMessage(CodeStatus.ERROR, rsf)
+                                )
+                            }
+                            else -> {
+                                throw Exception("PlaygroundRoutes:: this is impossible")
+                            }
+                        }
+                    }
+                    CodeStatus.ERROR -> {
+                        println("Route:: encountered some error\n${resp.first as String}\n")
+                        call.respond(ErrorMessage(
+                            resp.second, resp.first as String))
+                    }
+                    CodeStatus.INCOMPLETE -> {
+                        println("Route:: The code is not complete.\n")
+                        call.respond(ErrorMessage(
+                            resp.second, "incomplete code"))
+                    }
                 }
             } catch (e: Exception) {
-                call.respond(ErrorMessage(Status.ERROR, e.message ?: ""))
+                call.respond(ErrorMessage(CodeStatus.ERROR, e.message ?: ""))
             }
         }
     }
