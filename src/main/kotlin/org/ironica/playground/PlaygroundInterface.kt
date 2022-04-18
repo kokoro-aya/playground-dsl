@@ -6,27 +6,14 @@ import org.ironica.simula.SimulaRunner
 import org.ironica.simula.wrapCode
 
 @Serializable
-data class Data(val code: String, val grid: List<List<String>>)
+data class Data(val code: String, val grid: List<List<Block>>, val players: List<NamedPlayer>)
 
-fun convertJsonToGrid(array: List<List<String>>): Grid {
-    return array.map { it.map { when (it) {
-        "OPEN" -> Block.OPEN
-        "BLOCKED" -> Block.BLOCKED
-        "GEM" -> Block.GEM
-        "OPENEDSWITCH" -> Block.OPENEDSWITCH
-        "CLOSEDSWITCH" -> Block.CLOSEDSWITCH
-        else -> throw Exception("Cannot parse data to grid")
-    } }.toTypedArray() }.toTypedArray()
-}
+@Serializable
+data class NamedPlayer(val name: String, val p: SerializedPlayer)
 
-fun calculateInitialGem(grid: Grid): Int = grid.flatten().filter { it == Block.GEM }.size
+fun calculateInitialGem(grid: Grid): Int = grid.flatten().filter { it == Gem }.size
 
-class PlaygroundInterface(val code: String, val grid: Grid) {
-    // TODO: send player coo from front-end
-    private val player = Player(
-        Coordinate(0, 0),
-        Direction.RIGHT
-    )
+class PlaygroundInterface(val code: String, val grid: Grid, val players: Array<NamedPlayer>) {
 
     //    private val player = Player(
 //        Coordinate(0, 0),
@@ -40,7 +27,7 @@ class PlaygroundInterface(val code: String, val grid: Grid) {
         val codeGen = StringBuilder()
         val sim = SimulaPoet()
         sim.feed(grid)
-            .feed(player)
+            .feed(players)
             .feed(calculateInitialGem(grid))
             .generate(codeGen)
         codeGen.append("\n")

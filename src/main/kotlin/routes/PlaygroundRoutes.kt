@@ -17,7 +17,11 @@ fun Route.getPlaygroundRoute() {
     route("/paidiki-xara") {
         post {
             val data = call.receive<Data>()
-            val playgroundInterface = PlaygroundInterface(data.code, convertJsonToGrid(data.grid))
+            val playgroundInterface = PlaygroundInterface(
+                data.code,
+                data.grid.map { it.map { it }.toTypedArray() }.toTypedArray(),
+                data.players.toTypedArray()
+            )
             try {
                 val status = playgroundInterface.start()
                 val moves = payloadStorage.get()

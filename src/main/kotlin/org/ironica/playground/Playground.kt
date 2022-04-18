@@ -1,15 +1,43 @@
 package org.ironica.playground
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.ironica.playground.Direction.*
-import org.ironica.playground.Block.*
 enum class Direction {
     UP, DOWN, LEFT, RIGHT
 }
 
-enum class Block {
-    OPEN, BLOCKED, GEM, CLOSEDSWITCH, OPENEDSWITCH
-}
+@Serializable
+sealed class Block
+
+@Serializable
+@SerialName("OPEN")
+object Open : Block()
+
+@Serializable
+@SerialName("BLOCKED")
+object Blocked : Block()
+
+@Serializable
+@SerialName("GEM")
+object Gem : Block()
+
+@Serializable
+@SerialName("BEEPER")
+data class Beeper(val energy: Int) : Block()
+
+@Serializable
+@SerialName("CLOSEDSWITCH")
+object ClosedSwitch : Block()
+
+@Serializable
+@SerialName("OPENEDSWITCH")
+object OpenedSwitch : Block()
+
+@Serializable
+@SerialName("PORTAL")
+data class Portal(val dest: SerializedCoordinate) : Block()
+
 
 typealias Grid = Array<Array<Block>>
 
@@ -26,14 +54,14 @@ data class Player(val coo: Coordinate, var dir: Direction) {
 
     var collectedGem = 0
 
-    private fun isBlockedYPlus() = coo.y < 1 || grid[coo.y - 1][coo.x] == BLOCKED
-    private fun isBlockedYMinus() = coo.y > grid.size - 2 || grid[coo.y + 1][coo.x] == BLOCKED
-    private fun isBlockedXMinus() = coo.x < 1 || grid[coo.y][coo.x - 1] == BLOCKED
-    private fun isBlockedXPlus() = coo.x > grid[0].size - 2 || grid[coo.y][coo.x + 1] == BLOCKED
+    private fun isBlockedYPlus() = coo.y < 1 || grid[coo.y - 1][coo.x] == Blocked
+    private fun isBlockedYMinus() = coo.y > grid.size - 2 || grid[coo.y + 1][coo.x] == Blocked
+    private fun isBlockedXMinus() = coo.x < 1 || grid[coo.y][coo.x - 1] == Blocked
+    private fun isBlockedXPlus() = coo.x > grid[0].size - 2 || grid[coo.y][coo.x + 1] == Blocked
 
-    val isOnGem = { grid[coo.y][coo.x] == GEM }
-    val isOnOpenedSwitch = { grid[coo.y][coo.x] == OPENEDSWITCH }
-    val isOnClosedSwitch = { grid[coo.y][coo.x] == CLOSEDSWITCH }
+    val isOnGem = { grid[coo.y][coo.x] == Gem }
+    val isOnOpenedSwitch = { grid[coo.y][coo.x] == OpenedSwitch }
+    val isOnClosedSwitch = { grid[coo.y][coo.x] == ClosedSwitch }
     val isBlocked = { when (dir) {
         UP -> isBlockedYPlus()
         DOWN -> isBlockedYMinus()
@@ -74,18 +102,18 @@ data class Player(val coo: Coordinate, var dir: Direction) {
     fun collectGem(): Boolean {
         if (isOnGem()) {
             collectedGem += 1
-            grid[coo.y][coo.x] = OPEN
+            grid[coo.y][coo.x] = Open
             return true
         }
         return false
     }
     fun toggleSwitch(): Boolean {
         if (isOnOpenedSwitch()) {
-            grid[coo.y][coo.x] = CLOSEDSWITCH
+            grid[coo.y][coo.x] = ClosedSwitch
             return true
         }
         if (isOnClosedSwitch()) {
-            grid[coo.y][coo.x] = OPENEDSWITCH
+            grid[coo.y][coo.x] = OpenedSwitch
             return true
         }
         return false
@@ -99,13 +127,13 @@ class Playground(val grid: Grid, val player: Player, private val initialGem: Int
     }
 
     fun win(): Boolean {
-        return grid.flatMap { it.filter { it == GEM } }.isEmpty() && grid.flatMap { it.filter { it == CLOSEDSWITCH } }.isEmpty()
+        return grid.flatMap { it.filter { it == Gem } }.isEmpty() && grid.flatMap { it.filter { it == ClosedSwitch } }.isEmpty()
     }
     fun gemCount(): Int {
-        return initialGem - grid.flatMap { it.filter { it == GEM } }.size
+        return initialGem - grid.flatMap { it.filter { it == Gem } }.size
     }
     fun switchCount(): Int {
-        return grid.flatMap { it.filter { it == OPENEDSWITCH } }.size
+        return grid.flatMap { it.filter { it == OpenedSwitch } }.size
     }
 
 
@@ -121,11 +149,13 @@ class Playground(val grid: Grid, val player: Player, private val initialGem: Int
                 }
                 else {
                     print(when (grid[i][j]) {
-                        OPEN -> "_"
-                        BLOCKED -> "B"
-                        GEM -> "G"
-                        CLOSEDSWITCH -> "X"
-                        OPENEDSWITCH -> "O"
+                        Open -> "_"
+                        Blocked -> "B"
+                        Gem -> "G"
+                        ClosedSwitch -> "X"
+                        OpenedSwitch -> "O"
+                        is Beeper -> "P"
+                        is Portal -> "+"
                     })
             } }
             println()
@@ -136,9 +166,9 @@ class Playground(val grid: Grid, val player: Player, private val initialGem: Int
 
 fun main() {
     val grid = arrayOf(
-            arrayOf(OPEN, CLOSEDSWITCH, BLOCKED, BLOCKED, BLOCKED),
-            arrayOf(CLOSEDSWITCH, OPEN, OPEN, OPEN, BLOCKED),
-            arrayOf(BLOCKED, GEM, BLOCKED, GEM, BLOCKED)
+            arrayOf(Open, ClosedSwitch, Blocked, Blocked, Blocked),
+            arrayOf(ClosedSwitch, Open, Open, Open, Blocked),
+            arrayOf(Blocked, Gem, Blocked, Gem, Blocked)
     )
     val player = Player(
         Coordinate(0, 0),

@@ -8,6 +8,9 @@ var payloadStorage: ThreadLocal<MutableList<Payload>> = ThreadLocal.withInitial(
 data class SerializedPlayer(val x: Int, val y: Int, val dir: Direction)
 
 @Serializable
+data class SerializedCoordinate(val x: Int, val y: Int)
+
+@Serializable
 data class SerializedGrid(val grid: Grid)
 
 @Serializable

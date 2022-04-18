@@ -40,11 +40,13 @@ class SimulaPoet {
         )
         return this
     }
-    fun feed(player: Player): SimulaPoet {
-        fs.addProperty(PropertySpec.builder("player", Player::class)
-            .initializer(player.generateTemplate())
-            .build()
-        )
+
+    fun feed(players: Array<NamedPlayer>): SimulaPoet {
+        players.forEach {
+            fs.addProperty(PropertySpec.builder(it.name, Player::class)
+                .initializer(it.p.generateTemplate())
+                .build())
+        }
         return this
     }
 
@@ -59,19 +61,24 @@ class SimulaPoet {
     private fun Grid.generateTemplate(): String {
         return ("arrayOf(" + this.map { "\n    arrayOf(" + it.map {
             when (it) {
-                Block.OPEN -> "Block.OPEN"
-                Block.BLOCKED -> "Block.BLOCKED"
-                Block.GEM -> "Block.GEM"
-                Block.CLOSEDSWITCH -> "Block.CLOSEDSWITCH"
-                Block.OPENEDSWITCH -> "Block.OPENEDSWITCH"
+                Blocked, ClosedSwitch, Gem, Open, OpenedSwitch ->
+                    it::class.simpleName
+                is Portal -> it.generateTemplate()
+                is Beeper -> it.generateTemplate()
             }
         } + ")" } + "\n)").replace("[", "").replace("]", "")
     }
 
-    private fun Player.generateTemplate(): String {
+    private fun Portal.generateTemplate(): String
+        = "Portal(Coordinate(${this.dest.x}, ${this.dest.y}))"
+
+    private fun Beeper.generateTemplate(): String
+        = "Beeper(${this.energy})"
+
+    private fun SerializedPlayer.generateTemplate(): String {
         return """
             Player(
-                Coordinate(${this.coo.x}, ${this.coo.y}),
+                Coordinate(${this.x}, ${this.y}),
                 Direction.${this.dir.name}
             )""".trimIndent()
     }
@@ -87,14 +94,13 @@ fun String.wrapCode(): String {
 
 fun main() {
     val grid = arrayOf(
-        arrayOf(Block.OPEN, Block.CLOSEDSWITCH, Block.OPEN, Block.CLOSEDSWITCH, Block.OPEN, Block.CLOSEDSWITCH, Block.OPEN, Block.CLOSEDSWITCH, Block.OPEN),
-        arrayOf(Block.BLOCKED, Block.GEM, Block.BLOCKED, Block.GEM, Block.BLOCKED, Block.GEM, Block.BLOCKED, Block.GEM, Block.BLOCKED)
+        arrayOf(Open, ClosedSwitch, Open, ClosedSwitch, Open, ClosedSwitch, Open, ClosedSwitch, Open),
+        arrayOf(Blocked, Gem, Blocked, Gem, Blocked, Gem, Blocked, Gem, Blocked)
     )
 
-    val player = Player(
-        Coordinate(0, 0),
-        Direction.RIGHT
-    )
+    val players = arrayOf(NamedPlayer(
+        "myplayer", SerializedPlayer(
+            0, 0, Direction.RIGHT)))
 
     val code = """
         fun turnRight() {
@@ -133,7 +139,7 @@ fun main() {
     val sim = SimulaPoet()
     sim
         .feed(grid)
-        .feed(player)
+        .feed(players)
         .feed(2)
         .generate(codeGen)
 

@@ -7,26 +7,26 @@ fun main() {
 
     val grid = arrayOf(
         arrayOf(
-            Block.OPEN,
-            Block.CLOSEDSWITCH,
-            Block.OPEN,
-            Block.CLOSEDSWITCH,
-            Block.OPEN,
-            Block.CLOSEDSWITCH,
-            Block.OPEN,
-            Block.CLOSEDSWITCH,
-            Block.OPEN
+            Open,
+            ClosedSwitch,
+            Open,
+            ClosedSwitch,
+            Open,
+            ClosedSwitch,
+            Open,
+            ClosedSwitch,
+            Open
         ),
         arrayOf(
-            Block.BLOCKED,
-            Block.GEM,
-            Block.BLOCKED,
-            Block.GEM,
-            Block.BLOCKED,
-            Block.GEM,
-            Block.BLOCKED,
-            Block.GEM,
-            Block.BLOCKED
+            Blocked,
+            Gem,
+            Blocked,
+            Gem,
+            Blocked,
+            Gem,
+            Blocked,
+            Gem,
+            Blocked
         )
     )
 

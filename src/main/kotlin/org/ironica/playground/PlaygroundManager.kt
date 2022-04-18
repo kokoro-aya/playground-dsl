@@ -67,7 +67,7 @@ class PlaygroundManager(val playground: Playground) {
     private fun appendEntry() {
         if (payloadStorage.get().size > 1000)
             throw Exception("Too many entries!")
-        val currentGrid = Array(playground.grid.size) { Array(playground.grid[0].size) { Block.OPEN } }
+        val currentGrid: Array<Array<Block>> = Array(playground.grid.size) { Array(playground.grid[0].size) { Open } }
         for (i in playground.grid.indices)
             for (j in playground.grid[0].indices)
                 currentGrid[i][j] = playground.grid[i][j]
