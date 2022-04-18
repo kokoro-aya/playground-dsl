@@ -120,10 +120,10 @@ data class Player(val coo: Coordinate, var dir: Direction) {
     }
 }
 
-class Playground(val grid: Grid, val player: Player, private val initialGem: Int) {
+class Playground(val grid: Grid, val players: List<Player>, private val initialGem: Int, private var energy: Int) {
 
     init {
-        player.grid = grid
+        players.forEach { it.grid = grid }
     }
 
     fun win(): Boolean {
@@ -139,16 +139,15 @@ class Playground(val grid: Grid, val player: Player, private val initialGem: Int
 
     fun printGrid() {
         grid.forEachIndexed { i, row -> row.forEachIndexed { j, _ ->
-                if (player.coo.x == j && player.coo.y == i) {
-                    print(when (player.dir) {
-                        UP -> "U"
-                        DOWN -> "D"
-                        LEFT -> "L"
-                        RIGHT -> "R"
-                    })
-                }
-                else {
-                    print(when (grid[i][j]) {
+            players.firstOrNull { it.coo.x == j && it.coo.y == i }?.let {
+                print(when (it.dir) {
+                    UP -> "U"
+                    DOWN -> "D"
+                    LEFT -> "L"
+                    RIGHT -> "R"
+                })
+            } ?: run {print(
+                    when (grid[i][j]) {
                         Open -> "_"
                         Blocked -> "B"
                         Gem -> "G"
@@ -157,7 +156,8 @@ class Playground(val grid: Grid, val player: Player, private val initialGem: Int
                         is Beeper -> "P"
                         is Portal -> "+"
                     })
-            } }
+                }
+            }
             println()
         }
         println()
@@ -175,7 +175,7 @@ fun main() {
         RIGHT
     )
 
-    val playground = Playground(grid, player, 2)
+    val playground = Playground(grid, listOf(player), 2, 9999)
     playground.printGrid()
 
     player.moveForward()

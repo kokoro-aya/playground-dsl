@@ -14,7 +14,7 @@ data class SerializedCoordinate(val x: Int, val y: Int)
 data class SerializedGrid(val grid: Grid)
 
 @Serializable
-data class Payload(val player: SerializedPlayer, val grid: SerializedGrid, val consoleLog: String, val special: String)
+data class Payload(val player: List<SerializedPlayer>, val grid: SerializedGrid, val consoleLog: String, val special: String)
 
 var gameStatus: Status? = null
 

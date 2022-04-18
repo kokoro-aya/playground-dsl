@@ -9,35 +9,37 @@ class PlaygroundManager(val playground: Playground) {
     init {
         appendEntry()
     }
+    
+    private fun getDefault(): Player = playground.players.first()
 
-    val isOnGem = playground.player.isOnGem
-    val isOnOpenedSwitch = playground.player.isOnOpenedSwitch
-    val isOnClosedSwitch = playground.player.isOnClosedSwitch
-    val isBlocked = playground.player.isBlocked
-    val isBlockedLeft = playground.player.isBlockedLeft
-    val isBlockedRight = playground.player.isBlockedRight
+    val isOnGem = getDefault().isOnGem
+    val isOnOpenedSwitch = getDefault().isOnOpenedSwitch
+    val isOnClosedSwitch = getDefault().isOnClosedSwitch
+    val isBlocked = getDefault().isBlocked
+    val isBlockedLeft = getDefault().isBlockedLeft
+    val isBlockedRight = getDefault().isBlockedRight
     fun collectedGem(): Int {
-        return playground.player.collectedGem
+        return getDefault().collectedGem
     }
 
     fun turnLeft() {
-        playground.player.turnLeft()
+        getDefault().turnLeft()
 //        printGrid()
         appendEntry()
     }
     fun moveForward() {
-        playground.player.moveForward()
+        getDefault().moveForward()
 //        printGrid()
         appendEntry()
     }
     fun collectGem() {
-        playground.player.collectGem()
+        getDefault().collectGem()
 //        printGrid()
         this.special = "GEM"
         appendEntry()
     }
     fun toggleSwitch() {
-        playground.player.toggleSwitch()
+        getDefault().toggleSwitch()
 //        printGrid()
         this.special = "SWITCH"
         appendEntry()
@@ -72,7 +74,7 @@ class PlaygroundManager(val playground: Playground) {
             for (j in playground.grid[0].indices)
                 currentGrid[i][j] = playground.grid[i][j]
         val payload = Payload(
-            SerializedPlayer(playground.player.coo.x, playground.player.coo.y, playground.player.dir),
+            playground.players.map { SerializedPlayer(it.coo.x, it.coo.y, it.dir) },
             SerializedGrid(currentGrid),
             this.consoleLog,
             this.special

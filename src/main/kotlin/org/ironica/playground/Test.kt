@@ -1,7 +1,6 @@
 package org.ironica.playground
 
 import kotlinx.coroutines.runBlocking
-import javax.script.ScriptEngineManager
 
 fun main() {
 
@@ -30,12 +29,12 @@ fun main() {
         )
     )
 
-    val player = Player(
+    val players = listOf(Player(
         Coordinate(0, 0),
         Direction.RIGHT
-    )
+    ))
 
-    val manager = PlaygroundManager(Playground(grid, player, 4))
+    val manager = PlaygroundManager(Playground(grid, players, 4, 9999))
 
     runBlocking {
         val win = play(manager) {

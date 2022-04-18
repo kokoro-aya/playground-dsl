@@ -1,6 +1,7 @@
 package org.ironica.simula
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.ironica.playground.*
 import kotlin.script.experimental.host.toScriptSource
 
@@ -47,12 +48,18 @@ class SimulaPoet {
                 .initializer(it.p.generateTemplate())
                 .build())
         }
+        fs.addProperty(PropertySpec.builder("players",
+            List::class.asTypeName()
+                .parameterizedBy(Player::class.asTypeName()))
+            .initializer("arrayOf(${players.map { it.name }.joinToString(", ")})")
+            .build()
+        )
         return this
     }
 
-    fun feed(initialGem: Int): SimulaPoet {
+    fun feed(initialGem: Int, energy: Int): SimulaPoet {
         fs.addProperty(PropertySpec.builder("manager", PlaygroundManager::class)
-            .initializer("PlaygroundManager(Playground(grid, player, $initialGem))")
+            .initializer("PlaygroundManager(Playground(grid, players, $initialGem, $energy))")
             .build()
         )
         return this
@@ -140,7 +147,7 @@ fun main() {
     sim
         .feed(grid)
         .feed(players)
-        .feed(2)
+        .feed(2, 9999)
         .generate(codeGen)
 
     codeGen.append("\n")

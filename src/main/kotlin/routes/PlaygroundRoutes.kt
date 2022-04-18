@@ -17,13 +17,12 @@ fun Route.getPlaygroundRoute() {
     route("/paidiki-xara") {
         post {
             val data = call.receive<Data>()
-            val playgroundInterface = PlaygroundInterface(
-                data.code,
-                data.grid.map { it.map { it }.toTypedArray() }.toTypedArray(),
-                data.players.toTypedArray()
-            )
             try {
-                val status = playgroundInterface.start()
+                val status = launchPlayground(
+                    data.code,
+                    data.grid.map { it.map { it }.toTypedArray() }.toTypedArray(),
+                    data.players.toTypedArray(),
+                    data.energy)
                 val moves = payloadStorage.get()
 //                println("The size of payloads is ${moves.size}")
                 when (status) {
