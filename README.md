@@ -1,4 +1,8 @@
-# playground-dsl (WIP)
+# playground-dsl
+
+The currently usable project could be found [here](https://github.com/Ironica/simulatte).
+
+---
 
 This is the old repo of Amatsukaze project.
 
@@ -8,7 +12,7 @@ Updated with thread-safe implementation of payload.
 
 ~~Deploy this program with [my old playground front-end](https://github.com/kokoro-aya/playground-front) or supply your own front-end.~~
 
-This repository is currently in work for some adaptations to work with [a front-end written in React and Ant Design](https://github.com/kokoro-aya/shizuku-front-end), the work is expected to be completed before 04/26.
+~~This repository is currently in work for some adaptations to work with [a front-end written in React and Ant Design](https://github.com/kokoro-aya/shizuku-front-end).~~
 
 Libraries used:
 
